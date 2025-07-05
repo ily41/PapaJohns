@@ -2,7 +2,7 @@ import { Outlet } from "react-router"
 import { Container } from "react-bootstrap"
 import Footer from "./Footer"
 import Header from "./Header"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Basket from "./Basket"
 
 const data = {
@@ -45,49 +45,58 @@ const data = {
     { id: 36, name: "Western Barbecue", desc: "Barbekyu sousu, mal əti və qarğıdalı ilə western ləzzəti", img: "WesternBarbecue.jpg", filter: ["meat"], price: { sm: 12, md: 18, lg: 24 } }
 ]}
 
-const referenceArr = [
-  { name: "salam",
-    img: "../public/Assets/img/4cheese.jpg",
-    size: "md",
-    price: 14,
-    quant: 1
-  },
-  {name: "diff",
-    img: "../public/Assets/img/Mushroom.jpg",
-    size: "sm",
-    price: 28,
-    quant: 1
-  },
-  {name: "salam",
-    img: "../public/Assets/img/SpicyItalian.jpg",
-    size: "md",
-    price: 12,
-    quant: 1
-  }
-]
+
 
 
 
 function App() {
     const [show, setShow] = useState(false)
-    const [basket, setBasket] = useState(referenceArr)
-    const [quantity, setQuantity] = useState(1)
+    const [basket, setBasket] = useState([])
+    const path = './Public/Assets/Img/'
+
+
+    useEffect(() => sessionStorage.setItem("basket", JSON.stringify(basket)), [basket])
 
     const deleteFromBasket = (idx) => {
         setBasket(basket.filter((item,i) => i !==idx))
     }
 
     const updateBasket = (idx,qua) => {
-      console.log(qua);
+      console.log("qua",qua);
+      
       
       if( qua == 0 ) {
         
         deleteFromBasket(idx)
       }else {
         let obj = basket[idx]
+        console.log(obj);
+        
         obj.quant = qua
         setBasket(basket.map((item,i) => i == idx ? obj : item))
       }
+      
+    }
+
+
+    const addBasket = (idEl,quantityEl,sizePrice) => {     
+      
+      
+      const index = basket.findIndex(item => item.id == idEl && item.size == sizePrice)
+      console.log("index",index);
+      
+      const elem = data.pizza.find(item => item.id == idEl)
+      if(index >=0) {
+        console.log(basket[index]);
+        updateBasket(index,basket[index].quant + quantityEl)
+        
+        
+      }else {
+        setBasket([...basket, {id: idEl, name: elem.name, img: path + elem.img, size: sizePrice, price: elem.price[sizePrice], quant: quantityEl}])
+        
+      }
+      setShow(true)
+     
       
     }
     
@@ -96,11 +105,11 @@ function App() {
       <Header setShow={setShow} />
         <main className="py-5">
           <Container >
-            <Outlet context={data} quantity={quantity} setQuantity={setQuantity} />
+            <Outlet context={{data,addBasket}}  />
           </Container>
         </main>
       <Footer />
-      <Basket show={show} setShow={setShow} basket={basket} setBasket={setBasket} quantity={quantity} setQuantity={setQuantity} updateBasket={updateBasket}></Basket>
+      <Basket show={show} setShow={setShow} basket={basket} setBasket={setBasket} updateBasket={updateBasket} deleteFromBasket={deleteFromBasket} ></Basket>
 
     </>
   )

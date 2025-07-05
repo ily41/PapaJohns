@@ -2,9 +2,11 @@ import React, { useState } from 'react'
 import { Button, Card, Form, InputGroup } from "react-bootstrap"
 import { useOutletContext } from 'react-router'
 
-const Item = ({data: {name,img,desc,price}}) => {
-    const {quantity,setQuantity} = useOutletContext()
+const Item = ({data: {id,name,img,desc,price},addBasket}) => {
+  
+    
     const [sizePrice, setSizePrice] = useState(Object.keys(price)[0 ])
+    const [quantity, setQuantity] = useState(1)
     
     
     const path = './Public/Assets/Img/'
@@ -37,7 +39,7 @@ const Item = ({data: {name,img,desc,price}}) => {
           <h5>{quantity*price[sizePrice]}$</h5>
         </div>
         <div className='d-grid gap-2'>
-          <Button  variant="warning">Eat me!</Button>
+          <Button onClick={() => addBasket(id,quantity,sizePrice)} variant="warning">Eat me!</Button>
         </div>
       </Card.Body>
     </Card>

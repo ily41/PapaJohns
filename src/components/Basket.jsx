@@ -1,7 +1,8 @@
 import React from 'react'
-import { Button, Modal, Table } from 'react-bootstrap'
+import { Button, Modal, Table, } from 'react-bootstrap'
+import {FaRegTrashAlt} from 'react-icons/fa'
 
-const Basket = ({setShow,show,basket,quantity,updateBasket}) => {
+const Basket = ({setShow,show,basket,updateBasket,deleteFromBasket}) => {
     
     
   return (
@@ -39,6 +40,7 @@ const Basket = ({setShow,show,basket,quantity,updateBasket}) => {
                         <Button onClick={() =>  updateBasket(idx,item.quant+1)} variant="outline-secondary">+</Button>
                     </td>
                     <td>{item.price*item.quant}$</td>
+                    <td><FaRegTrashAlt onClick={() => deleteFromBasket(idx)} /></td>
                 </tr>
             ))}
             
